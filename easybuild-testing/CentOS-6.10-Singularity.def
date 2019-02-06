@@ -1,0 +1,23 @@
+BootStrap: yum
+OSVersion: 6.10
+MirrorURL: http://mirror.centos.org/centos-6/%{OSVERSION}/os/x86_64/
+Include: yum
+
+%runscript
+    echo "This is what happens when you run the container..."
+    rpm -qa
+
+%post
+    # fix for building CentOS 6 container on a CentOS 7 system
+    # see https://github.com/sylabs/singularity/issues/241
+    rm -rf /var/lib/rpm/__*
+    touch /var/lib/rpm/* 
+    rpm --rebuilddb
+
+    yum -y install vim
+    yum -y install which git
+    yum -y install python-setuptools environment-modules
+    yum -y install gcc-c++ make patch file bzip2 unzip tar xz
+    yum -y install openssl openssl-devel rdma-core-devel
+    #yum -y install perl-Data-Dumper  # required for Autoconf build
+    #yum -y install perl-Thread-Queue  # for Automake build, see https://github.com/easybuilders/easybuild-easyconfigs/issues/1822
